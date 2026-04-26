@@ -1,0 +1,38 @@
+{% extends 'superadmin/base_superadmin.html' %}
+{% block page_title %}All Businesses{% endblock %}
+{% block content %}
+<div class="bg-white rounded-2xl border-2 border-ink-100 p-5">
+  <h3 class="text-sm font-semibold text-ink-800 mb-4">
+    {{ businesses.count }} registered businesses
+  </h3>
+  <div class="space-y-2">
+    {% for b in businesses %}
+    <div class="flex items-center justify-between p-3 rounded-xl
+                border border-ink-100 hover:border-green-200
+                hover:bg-green-50 transition-colors">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-green-100 flex items-center
+                    justify-center text-green-700 font-bold text-sm">
+          {{ b.name|slice:":1"|upper }}
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-ink-800">{{ b.name }}</p>
+          <p class="text-xs text-ink-400">
+            {{ b.get_business_type_display }} · {{ b.country }} · {{ b.currency }}
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="badge text-[10px]
+          {% if b.is_active %}badge-green{% else %}badge-red{% endif %}">
+          {% if b.is_active %}Active{% else %}Inactive{% endif %}
+        </span>
+        <span class="text-xs text-ink-400">{{ b.created_at|date:"d M Y" }}</span>
+      </div>
+    </div>
+    {% empty %}
+    <p class="text-center text-ink-400 text-sm py-10">No businesses yet.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

@@ -1,195 +1,369 @@
 {% extends 'base.html' %}
-
 {% block title %}Vendly — Smart POS for modern businesses{% endblock %}
 
 {% block body %}
 
-<!-- ── NAV ── -->
-<nav class="fixed top-0 inset-x-0 z-50 bg-white/80 dark:bg-slate-900/80
-            backdrop-blur border-b border-slate-200 dark:border-slate-700"
+<!-- ══ NAV ══════════════════════════════════════════════════════════════ -->
+<nav class="fixed top-0 inset-x-0 z-50 bg-white/90 backdrop-blur-sm
+            border-b-2 border-green-500"
      x-data="{ open: false }">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center h-16 gap-8">
-    <div class="flex items-center gap-2 flex-shrink-0">
-      <div class="w-8 h-8 rounded-xl bg-primary flex items-center justify-center">
-        <i class="fa-solid fa-bolt text-white text-xs"></i>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center h-16 gap-6">
+
+    <!-- Logo -->
+    <a href="/" class="flex items-center gap-2 flex-shrink-0">
+      <div class="w-8 h-8 rounded-xl bg-green-600 flex items-center justify-center shadow-sm">
+        <i class="fa-solid fa-bolt text-yellow-300 text-sm"></i>
       </div>
-      <span class="text-lg font-bold text-primary-500">Vendly</span>
+      <span class="text-lg font-bold text-green-800">Vendly</span>
+    </a>
+
+    <!-- Desktop links -->
+    <div class="hidden md:flex items-center gap-6 text-sm font-medium text-ink-600 ml-4">
+      <a href="#features" class="hover:text-green-700 transition-colors">Features</a>
+      <a href="#pricing"  class="hover:text-green-700 transition-colors">Pricing</a>
+      <a href="{% url 'landing:demo' %}"
+         class="hover:text-green-700 transition-colors">Demo</a>
     </div>
 
-    <div class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600
-                dark:text-slate-300 ml-4">
-      <a href="#features" class="hover:text-primary-500 transition-colors">Features</a>
-      <a href="#pricing"  class="hover:text-primary-500 transition-colors">Pricing</a>
-      <a href="#demo"     class="hover:text-primary-500 transition-colors">Demo</a>
-    </div>
-
+    <!-- CTA -->
     <div class="flex items-center gap-3 ml-auto">
       <a href="{% url 'accounts:login' %}"
-         class="hidden sm:block text-sm font-medium text-slate-600
-                dark:text-slate-300 hover:text-primary-500 transition-colors">
+         class="hidden sm:block text-sm font-medium text-ink-600
+                hover:text-green-700 transition-colors">
         Sign in
       </a>
       <a href="{% url 'tenants:onboarding' %}"
-         class="bg-primary hover:bg-primary-600 text-white text-sm font-semibold
-                px-4 py-2 rounded-xl transition-colors">
+         class="btn-primary text-sm py-2 px-4">
         Start free trial
       </a>
     </div>
   </div>
 </nav>
 
-<!-- ── HERO ── -->
-<section class="pt-32 pb-20 px-4 sm:px-6 max-w-6xl mx-auto text-center">
-  <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-primary-50 text-primary-600
-              text-xs font-semibold rounded-full border border-primary-200 mb-6">
-    <i class="fa-solid fa-star text-[10px]"></i>
+<!-- ══ HERO ═════════════════════════════════════════════════════════════ -->
+<section class="pt-32 pb-24 px-4 sm:px-6 max-w-6xl mx-auto text-center">
+
+  <!-- Badge -->
+  <div class="inline-flex items-center gap-2 px-3 py-1.5 mb-6
+              bg-green-100 text-green-800 text-xs font-semibold
+              rounded-full border border-green-300">
+    <i class="fa-solid fa-star text-yellow-500 text-[10px]"></i>
     Built for African small businesses
   </div>
 
-  <h1 class="text-4xl sm:text-6xl font-extrabold text-slate-900 dark:text-white
+  <!-- Headline -->
+  <h1 class="text-4xl sm:text-6xl font-extrabold text-ink-900
              leading-tight mb-6 max-w-3xl mx-auto">
     The smartest POS for your
-    <span class="text-primary-500"> growing business</span>
+    <span class="text-green-600"> growing business</span>
   </h1>
 
-  <p class="text-lg text-slate-500 dark:text-slate-400 mb-10 max-w-xl mx-auto leading-relaxed">
-    Sell faster, track inventory, manage staff, and understand your numbers — all from one dashboard.
-    Works offline. Supports MPESA & Paystack.
+  <p class="text-lg text-ink-500 mb-10 max-w-xl mx-auto leading-relaxed">
+    Sell faster, track inventory, manage staff, and understand your numbers —
+    all from one dashboard. Works offline. Supports MPESA &amp; Paystack.
   </p>
 
-  <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+  <!-- CTAs -->
+  <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4">
     <a href="{% url 'tenants:onboarding' %}"
-       class="w-full sm:w-auto bg-primary hover:bg-primary-600 text-white font-bold
-              px-8 py-3.5 rounded-2xl transition-colors flex items-center
-              justify-center gap-2 text-base shadow-lg shadow-primary/30">
+       class="w-full sm:w-auto btn-primary text-base py-3.5 px-8
+              shadow-lg shadow-green-200 justify-center">
       <i class="fa-solid fa-rocket"></i> Start your free trial
     </a>
     <a href="{% url 'landing:demo' %}"
-       class="w-full sm:w-auto bg-white dark:bg-slate-800 hover:bg-slate-50
-              dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold
-              px-8 py-3.5 rounded-2xl border border-slate-200 dark:border-slate-700
-              transition-colors flex items-center justify-center gap-2 text-base">
-      <i class="fa-solid fa-play-circle text-primary-500"></i> Try live demo
+       class="w-full sm:w-auto flex items-center justify-center gap-2
+              bg-white text-ink-700 font-semibold text-base
+              px-8 py-3.5 rounded-xl border-2 border-green-300
+              hover:border-green-500 hover:bg-green-50 transition-colors">
+      <i class="fa-solid fa-play-circle text-green-600"></i> Try live demo
     </a>
   </div>
 
-  <p class="mt-4 text-xs text-slate-400">
-    14-day free trial · No credit card required · Cancel anytime
+  <p class="text-xs text-ink-400">
+    14-day free trial &middot; No credit card required &middot; Cancel anytime
   </p>
+
+  <!-- Hero visual -->
+  <div class="mt-16 relative max-w-4xl mx-auto">
+    <div class="bg-green-900 rounded-3xl p-1 shadow-2xl shadow-green-900/40">
+      <div class="bg-white rounded-2xl overflow-hidden">
+
+        <!-- Fake topbar -->
+        <div class="bg-white border-b-2 border-green-500 px-4 py-3
+                    flex items-center gap-3">
+          <div class="w-6 h-6 rounded-lg bg-green-600 flex items-center justify-center">
+            <i class="fa-solid fa-bolt text-yellow-300 text-xs"></i>
+          </div>
+          <span class="text-sm font-bold text-green-800">Vendly</span>
+          <div class="ml-auto flex items-center gap-2">
+            <div class="w-20 h-6 bg-green-500 rounded-lg flex items-center
+                        justify-center gap-1">
+              <i class="fa-solid fa-plus text-white text-[10px]"></i>
+              <span class="text-white text-[10px] font-semibold">New sale</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fake dashboard content -->
+        <div class="p-4 bg-ink-50">
+          <!-- KPI row -->
+          <div class="grid grid-cols-4 gap-3 mb-4">
+            {% for card in "1234" %}
+            <div class="bg-white rounded-xl border border-ink-200 p-3">
+              <div class="text-[10px] text-ink-400 mb-1">
+                {% if forloop.counter == 1 %}Today's sales
+                {% elif forloop.counter == 2 %}Transactions
+                {% elif forloop.counter == 3 %}Products
+                {% else %}Low stock{% endif %}
+              </div>
+              <div class="text-base font-bold
+                {% if forloop.counter == 1 %}text-green-700
+                {% elif forloop.counter == 2 %}text-yellow-600
+                {% else %}text-ink-800{% endif %}">
+                {% if forloop.counter == 1 %}KES 4,820
+                {% elif forloop.counter == 2 %}23
+                {% elif forloop.counter == 3 %}142
+                {% else %}3{% endif %}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          <!-- Fake chart bar -->
+          <div class="bg-white rounded-xl border border-ink-200 p-3 mb-3">
+            <div class="text-[10px] text-ink-400 mb-2 font-medium">
+              Sales — last 7 days
+            </div>
+            <div class="flex items-end gap-1.5 h-14">
+              {% for h in "3564726" %}
+              <div class="flex-1 rounded-t-sm"
+                   style="height:{% if h == '3' %}40%{% elif h == '5' %}60%{% elif h == '6' %}75%{% elif h == '4' %}50%{% elif h == '7' %}90%{% elif h == '2' %}30%{% else %}80%{% endif %};
+                          background:{% if forloop.last %}#22c55e{% else %}#bbf7d0{% endif %}">
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          <!-- Fake product row -->
+          <div class="bg-white rounded-xl border border-ink-200 p-3">
+            <div class="text-[10px] text-ink-400 mb-2 font-medium">Recent transactions</div>
+            {% for i in "123" %}
+            <div class="flex items-center justify-between py-1.5
+                        {% if not forloop.last %}border-b border-ink-100{% endif %}">
+              <span class="text-[10px] font-mono text-green-600">#RCP-00{{ forloop.counter }}</span>
+              <span class="text-[10px] text-ink-500">
+                {% if forloop.counter == 1 %}3 items{% elif forloop.counter == 2 %}1 item{% else %}5 items{% endif %}
+              </span>
+              <span class="text-[10px] font-semibold text-ink-800">
+                KES {% if forloop.counter == 1 %}480{% elif forloop.counter == 2 %}130{% else %}1,200{% endif %}
+              </span>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating badges -->
+    <div class="absolute -left-4 top-12 bg-white rounded-2xl shadow-xl
+                border border-green-200 px-4 py-3 text-left hidden sm:block">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+          <i class="fa-solid fa-arrow-trend-up text-green-600 text-xs"></i>
+        </div>
+        <div>
+          <p class="text-[10px] text-ink-400">Today's revenue</p>
+          <p class="text-sm font-bold text-green-700">KES 4,820</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="absolute -right-4 bottom-16 bg-white rounded-2xl shadow-xl
+                border border-yellow-200 px-4 py-3 text-left hidden sm:block">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center">
+          <i class="fa-solid fa-bolt text-yellow-600 text-xs"></i>
+        </div>
+        <div>
+          <p class="text-[10px] text-ink-400">Sale processed</p>
+          <p class="text-sm font-bold text-ink-800">In 3 seconds</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- ── FEATURES ── -->
-<section id="features" class="py-20 bg-slate-50 dark:bg-slate-800/50">
+<!-- ══ FEATURES ══════════════════════════════════════════════════════════ -->
+<section id="features" class="py-20 bg-ink-50">
   <div class="max-w-6xl mx-auto px-4 sm:px-6">
     <div class="text-center mb-14">
-      <h2 class="text-3xl font-extrabold text-slate-800 dark:text-slate-100 mb-3">
+      <h2 class="text-3xl font-extrabold text-ink-900 mb-3">
         Everything your business needs
       </h2>
-      <p class="text-slate-500 dark:text-slate-400 max-w-md mx-auto">
+      <p class="text-ink-500 max-w-md mx-auto">
         One platform. Zero complexity. Designed for the way you actually work.
       </p>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
       {% for feature in features %}
-      <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200
-                  dark:border-slate-700 p-6 hover:shadow-md hover:-translate-y-0.5
-                  transition-all duration-200">
-        <div class="w-11 h-11 rounded-xl bg-{{ feature.color }}-50
-                    flex items-center justify-center mb-4">
-          <i class="fa-solid {{ feature.icon }} text-{{ feature.color }}-500"></i>
+      <div class="bg-white rounded-2xl border-2 p-6 transition-all duration-200
+                  hover:-translate-y-1 hover:shadow-lg
+                  {% if feature.color == 'green' %}hover:border-green-300
+                  {% else %}hover:border-yellow-300{% endif %}
+                  border-ink-100">
+        <div class="w-11 h-11 rounded-xl mb-4 flex items-center justify-center
+                    {% if feature.color == 'green' %}bg-green-100{% else %}bg-yellow-100{% endif %}">
+          <i class="fa-solid {{ feature.icon }} text-lg
+                    {% if feature.color == 'green' %}text-green-700{% else %}text-yellow-700{% endif %}">
+          </i>
         </div>
-        <h3 class="font-semibold text-slate-800 dark:text-slate-100 mb-2">
-          {{ feature.title }}
-        </h3>
-        <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-          {{ feature.description }}
-        </p>
+        <h3 class="font-semibold text-ink-800 mb-2">{{ feature.title }}</h3>
+        <p class="text-sm text-ink-500 leading-relaxed">{{ feature.description }}</p>
       </div>
       {% endfor %}
     </div>
   </div>
 </section>
 
-<!-- ── PRICING ── -->
-<section id="pricing" class="py-20 px-4 sm:px-6 max-w-6xl mx-auto">
-  <div class="text-center mb-14">
-    <h2 class="text-3xl font-extrabold text-slate-800 dark:text-slate-100 mb-3">
-      Simple, honest pricing
-    </h2>
-    <p class="text-slate-500 dark:text-slate-400">Start free. Scale when you're ready.</p>
+<!-- ══ SOCIAL PROOF STRIP ════════════════════════════════════════════════ -->
+<div class="bg-green-900 py-10">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+    <p class="text-green-300 text-sm font-medium mb-6 uppercase tracking-wider">
+      Trusted by businesses across East Africa
+    </p>
+    <div class="grid grid-cols-3 sm:grid-cols-6 gap-6">
+      {% for icon, label in business_types %}
+      <div class="flex flex-col items-center gap-2">
+        <div class="w-10 h-10 rounded-xl bg-green-800 flex items-center justify-center">
+          <i class="fa-solid {{ icon }} text-yellow-400 text-sm"></i>
+        </div>
+        <span class="text-green-300 text-xs font-medium">{{ label }}</span>
+      </div>
+      {% endfor %}
+    </div>
   </div>
+</div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
-    <!-- Basic -->
-    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200
-                dark:border-slate-700 p-8">
-      <p class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-2">Basic</p>
-      <p class="text-4xl font-extrabold text-slate-800 dark:text-slate-100 mb-1">
-        KES 999
-        <span class="text-base font-normal text-slate-400">/mo</span>
-      </p>
-      <p class="text-xs text-slate-400 mb-6">per business location</p>
-      <ul class="space-y-3 mb-8">
-        {% for item in basic_features %}
-        <li class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-          <i class="fa-solid fa-circle-check text-emerald-500 text-xs flex-shrink-0"></i>
-          {{ item }}
-        </li>
-        {% endfor %}
-      </ul>
-      <a href="{% url 'tenants:onboarding' %}"
-         class="block w-full text-center border border-primary text-primary font-semibold
-                py-2.5 rounded-xl hover:bg-primary hover:text-white transition-colors">
-        Start free trial
-      </a>
+<!-- ══ PRICING ═══════════════════════════════════════════════════════════ -->
+<section id="pricing" class="py-20 px-4 sm:px-6">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-14">
+      <h2 class="text-3xl font-extrabold text-ink-900 mb-3">
+        Simple, honest pricing
+      </h2>
+      <p class="text-ink-500">Start free. Scale when you're ready.</p>
     </div>
 
-    <!-- Pro -->
-    <div class="bg-primary rounded-2xl p-8 relative overflow-hidden shadow-xl shadow-primary/30">
-      <div class="absolute top-4 right-4 bg-white/20 text-white text-xs font-bold
-                  px-2 py-1 rounded-full">Most popular</div>
-      <p class="text-sm font-semibold text-primary-200 uppercase tracking-wide mb-2">Pro</p>
-      <p class="text-4xl font-extrabold text-white mb-1">
-        KES 2,499
-        <span class="text-base font-normal text-primary-200">/mo</span>
-      </p>
-      <p class="text-xs text-primary-300 mb-6">per business location</p>
-      <ul class="space-y-3 mb-8">
-        {% for item in pro_features %}
-        <li class="flex items-center gap-2 text-sm text-white">
-          <i class="fa-solid fa-circle-check text-primary-200 text-xs flex-shrink-0"></i>
-          {{ item }}
-        </li>
-        {% endfor %}
-      </ul>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+
+      <!-- Basic -->
+      <div class="bg-white rounded-2xl border-2 border-ink-200
+                  hover:border-green-300 transition-colors p-8">
+        <p class="text-xs font-bold text-ink-400 uppercase tracking-widest mb-3">
+          Basic
+        </p>
+        <div class="flex items-end gap-1 mb-1">
+          <span class="text-4xl font-extrabold text-ink-900">KES 999</span>
+          <span class="text-ink-400 text-sm mb-1">/mo</span>
+        </div>
+        <p class="text-xs text-ink-400 mb-6">per business location</p>
+        <ul class="space-y-2.5 mb-8">
+          {% for item in basic_features %}
+          <li class="flex items-center gap-2.5 text-sm text-ink-600">
+            <i class="fa-solid fa-circle-check text-green-500 text-xs flex-shrink-0"></i>
+            {{ item }}
+          </li>
+          {% endfor %}
+        </ul>
+        <a href="{% url 'tenants:onboarding' %}"
+           class="block w-full text-center py-3 rounded-xl border-2 border-green-500
+                  text-green-700 font-semibold hover:bg-green-500 hover:text-white
+                  transition-colors text-sm">
+          Start free trial
+        </a>
+      </div>
+
+      <!-- Pro (highlighted) -->
+      <div class="bg-green-900 rounded-2xl p-8 relative overflow-hidden
+                  shadow-2xl shadow-green-900/30">
+        <div class="absolute top-4 right-4 bg-yellow-400 text-green-900
+                    text-xs font-bold px-2.5 py-1 rounded-full">
+          Most popular
+        </div>
+        <p class="text-xs font-bold text-green-400 uppercase tracking-widest mb-3">
+          Pro
+        </p>
+        <div class="flex items-end gap-1 mb-1">
+          <span class="text-4xl font-extrabold text-white">KES 2,499</span>
+          <span class="text-green-400 text-sm mb-1">/mo</span>
+        </div>
+        <p class="text-xs text-green-500 mb-6">per business location</p>
+        <ul class="space-y-2.5 mb-8">
+          {% for item in pro_features %}
+          <li class="flex items-center gap-2.5 text-sm text-green-100">
+            <i class="fa-solid fa-circle-check text-yellow-400 text-xs flex-shrink-0"></i>
+            {{ item }}
+          </li>
+          {% endfor %}
+        </ul>
+        <a href="{% url 'tenants:onboarding' %}"
+           class="block w-full text-center py-3 rounded-xl bg-yellow-400
+                  text-green-900 font-bold hover:bg-yellow-300
+                  transition-colors text-sm">
+          Start free trial
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA BAND ══════════════════════════════════════════════════════════ -->
+<section class="py-20 px-4 sm:px-6 bg-ink-50">
+  <div class="max-w-2xl mx-auto text-center">
+    <div class="w-16 h-16 rounded-3xl bg-green-600 flex items-center
+                justify-center mx-auto mb-6 shadow-lg shadow-green-300">
+      <i class="fa-solid fa-bolt text-yellow-300 text-2xl"></i>
+    </div>
+    <h2 class="text-3xl font-extrabold text-ink-900 mb-4">
+      Ready to grow your business?
+    </h2>
+    <p class="text-ink-500 mb-8 leading-relaxed">
+      Join hundreds of businesses already using Vendly to sell smarter,
+      manage better, and grow faster.
+    </p>
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
       <a href="{% url 'tenants:onboarding' %}"
-         class="block w-full text-center bg-white text-primary font-bold
-                py-2.5 rounded-xl hover:bg-primary-50 transition-colors">
-        Start free trial
+         class="w-full sm:w-auto btn-primary text-base py-3.5 px-8
+                shadow-lg shadow-green-200 justify-center">
+        <i class="fa-solid fa-rocket"></i> Start free — 14 days trial
+      </a>
+      <a href="{% url 'landing:demo' %}"
+         class="w-full sm:w-auto flex items-center justify-center gap-2
+                bg-white text-ink-700 font-semibold text-base
+                px-8 py-3.5 rounded-xl border-2 border-green-300
+                hover:border-green-500 hover:bg-green-50 transition-colors">
+        <i class="fa-solid fa-play-circle text-green-600"></i> Try demo first
       </a>
     </div>
   </div>
 </section>
 
-<!-- ── FOOTER ── -->
-<footer class="border-t border-slate-200 dark:border-slate-700 py-10
-               bg-white dark:bg-slate-800">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row
-              items-center justify-between gap-4">
+<!-- ══ FOOTER ════════════════════════════════════════════════════════════ -->
+<footer class="border-t-2 border-green-200 py-10 bg-white">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6
+              flex flex-col sm:flex-row items-center justify-between gap-4">
     <div class="flex items-center gap-2">
-      <div class="w-7 h-7 rounded-lg bg-primary flex items-center justify-center">
-        <i class="fa-solid fa-bolt text-white text-xs"></i>
+      <div class="w-7 h-7 rounded-lg bg-green-600 flex items-center justify-center">
+        <i class="fa-solid fa-bolt text-yellow-300 text-xs"></i>
       </div>
-      <span class="font-bold text-primary-500">Vendly</span>
+      <span class="font-bold text-green-800">Vendly</span>
     </div>
-    <p class="text-xs text-slate-400">
-      © {{ today.year }} Vendly. Smart POS for growing businesses.
+    <p class="text-xs text-ink-400">
+      &copy; {{ today.year }} Vendly. Smart POS for growing businesses.
     </p>
-    <div class="flex items-center gap-4 text-xs text-slate-400">
-      <a href="#" class="hover:text-primary-500 transition-colors">Privacy</a>
-      <a href="#" class="hover:text-primary-500 transition-colors">Terms</a>
-      <a href="#" class="hover:text-primary-500 transition-colors">Support</a>
+    <div class="flex items-center gap-4 text-xs text-ink-400">
+      <a href="#" class="hover:text-green-700 transition-colors">Privacy</a>
+      <a href="#" class="hover:text-green-700 transition-colors">Terms</a>
+      <a href="#" class="hover:text-green-700 transition-colors">Support</a>
     </div>
   </div>
 </footer>

@@ -1,98 +1,177 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 
-{% block title %}Set up your business{% endblock %}
+{% block title %}Set up your business — Vendly{% endblock %}
 
 {% block body %}
-<div class="min-h-screen bg-gradient-to-br from-slate-50 to-primary-50
-            dark:from-slate-900 dark:to-slate-800 flex items-center justify-center p-6">
-  <div class="w-full max-w-xl">
+<div class="min-h-screen flex items-center justify-center p-4 sm:p-6
+            bg-ink-50">
 
-    <!-- Header -->
+  <div class="w-full max-w-lg">
+
+    <!-- ── Logo ── -->
     <div class="text-center mb-8">
-      <div class="inline-flex items-center gap-2 mb-4">
-        <div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center">
-          <i class="fa-solid fa-bolt text-white"></i>
+      <a href="/" class="inline-flex items-center gap-2.5 mb-5">
+        <div class="w-10 h-10 rounded-2xl bg-green-700 flex items-center
+                    justify-center shadow-lg shadow-green-200">
+          <i class="fa-solid fa-bolt text-yellow-300 text-base"></i>
         </div>
-        <span class="text-xl font-bold text-primary-500">Vendly</span>
-      </div>
-      <h1 class="text-2xl font-bold text-slate-800 dark:text-slate-100">
-        Let's set up your business
+        <span class="text-2xl font-extrabold text-green-800">Vendly</span>
+      </a>
+
+      <h1 class="text-xl font-bold text-ink-800 mb-1">
+        {% if step == 1 %}Welcome! Let's set up your business
+        {% elif step == 2 %}Where are you based?
+        {% elif step == 3 %}Add your first product
+        {% elif step == 4 %}Invite your first staff member
+        {% else %}Create your account
+        {% endif %}
       </h1>
-      <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
-        Step {{ step }} of {{ total_steps }} — {{ step_title }}
+      <p class="text-sm text-ink-400">
+        Step {{ step }} of {{ total_steps }} —
+        <span class="text-green-700 font-medium">{{ step_title }}</span>
       </p>
     </div>
 
-    <!-- Step progress -->
-    <div class="flex items-center gap-2 mb-8">
+    <!-- ── Progress bar ── -->
+    <div class="flex items-center gap-1.5 mb-6">
       {% for i in steps_range %}
-      <div class="flex-1 h-1.5 rounded-full transition-all duration-500
-        {% if i < step %}bg-primary
-        {% elif i == step %}bg-primary-300
-        {% else %}bg-slate-200 dark:bg-slate-700{% endif %}"></div>
+      <div class="flex-1 h-2 rounded-full transition-all duration-500
+        {% if i < step %}bg-green-500
+        {% elif i == step %}bg-yellow-400
+        {% else %}bg-ink-200{% endif %}">
+      </div>
       {% endfor %}
     </div>
 
-    <!-- Card -->
-    <div class="bg-white dark:bg-slate-800 rounded-2xl border
-                border-slate-200 dark:border-slate-700 p-8 shadow-sm"
-         x-data="onboardingStep()">
+    <!-- ── Step indicator dots ── -->
+    <div class="flex items-center justify-center gap-2 mb-6">
+      {% for i in steps_range %}
+      <div class="flex items-center justify-center rounded-full font-bold
+                  text-xs transition-all duration-300
+        {% if i < step %}
+          w-6 h-6 bg-green-500 text-white
+        {% elif i == step %}
+          w-8 h-8 bg-yellow-400 text-green-900 ring-4 ring-yellow-100
+        {% else %}
+          w-6 h-6 bg-ink-200 text-ink-400
+        {% endif %}">
+        {% if i < step %}
+          <i class="fa-solid fa-check text-[10px]"></i>
+        {% else %}
+          {{ i }}
+        {% endif %}
+      </div>
+      {% if not forloop.last %}
+      <div class="w-8 h-0.5 {% if i < step %}bg-green-400{% else %}bg-ink-200{% endif %}
+                  rounded-full transition-all duration-300"></div>
+      {% endif %}
+      {% endfor %}
+    </div>
 
-      <form method="post" enctype="multipart/form-data" class="space-y-5">
+    <!-- ── Card ── -->
+    <div class="bg-white rounded-3xl border-2 border-ink-100
+                shadow-xl shadow-ink-900/5 p-6 sm:p-8"
+         x-data="{
+           init() {
+             const first = this.$el.querySelector(
+               'input:not([type=hidden]), select, textarea'
+             );
+             if (first) setTimeout(() => first.focus(), 150);
+           }
+         }">
+
+      <!-- Step icon header -->
+      <div class="flex items-center gap-3 mb-6 pb-5
+                  border-b border-ink-100">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0
+          {% if step == 1 %}bg-green-100{% elif step == 2 %}bg-yellow-100
+          {% elif step == 3 %}bg-green-100{% elif step == 4 %}bg-yellow-100
+          {% else %}bg-green-100{% endif %}">
+          <i class="fa-solid text-lg
+            {% if step == 1 %}fa-store text-green-700
+            {% elif step == 2 %}fa-location-dot text-yellow-700
+            {% elif step == 3 %}fa-box-open text-green-700
+            {% elif step == 4 %}fa-user-plus text-yellow-700
+            {% else %}fa-user-shield text-green-700{% endif %}">
+          </i>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-ink-800">{{ step_title }}</p>
+          <p class="text-xs text-ink-400">
+            {% if step == 1 %}Tell us your business name and type
+            {% elif step == 2 %}We'll set the right currency automatically
+            {% elif step == 3 %}You can add more products after setup
+            {% elif step == 4 %}They'll get their own login — you can skip this
+            {% else %}This will be your owner login
+            {% endif %}
+          </p>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <form method="post" enctype="multipart/form-data" class="space-y-4">
         {% csrf_token %}
         {{ form|crispy }}
 
-        <div class="flex items-center gap-3 pt-2">
+        <!-- Action buttons -->
+        <div class="flex items-center gap-3 pt-4 border-t border-ink-100">
+
           {% if step > 1 %}
           <a href="?step={{ step|add:'-1' }}"
-             class="flex-1 py-2.5 px-4 rounded-xl border border-slate-200
-                    dark:border-slate-600 text-sm font-medium text-slate-600
-                    dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700
-                    transition-colors text-center">
-            <i class="fa-solid fa-arrow-left mr-2"></i> Back
+             class="flex items-center justify-center gap-2
+                    py-2.5 px-4 rounded-xl border-2 border-ink-200
+                    text-sm font-medium text-ink-600
+                    hover:border-ink-400 hover:bg-ink-50
+                    transition-colors flex-shrink-0">
+            <i class="fa-solid fa-arrow-left text-xs"></i> Back
           </a>
           {% endif %}
 
           <button type="submit"
-            class="flex-1 bg-primary hover:bg-primary-600 text-white font-semibold
-                   py-2.5 px-4 rounded-xl transition-colors flex items-center
-                   justify-center gap-2">
+                  class="flex-1 flex items-center justify-center gap-2
+                         py-2.5 px-5 rounded-xl font-semibold text-sm
+                         transition-all duration-150
+                         {% if step == total_steps %}
+                           bg-green-600 hover:bg-green-700 text-white
+                           shadow-lg shadow-green-200
+                         {% else %}
+                           bg-green-500 hover:bg-green-600 text-white
+                         {% endif %}">
             {% if step == total_steps %}
               <i class="fa-solid fa-rocket"></i> Launch my dashboard
             {% else %}
-              Continue <i class="fa-solid fa-arrow-right"></i>
+              Continue <i class="fa-solid fa-arrow-right text-xs"></i>
             {% endif %}
           </button>
         </div>
 
-        {% if step < total_steps and step > 1 %}
-        <div class="text-center">
+        <!-- Skip link (steps 3 and 4 only) -->
+        {% if skippable %}
+        <div class="text-center pt-1">
           <a href="?skip=1"
-             class="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
-            Skip this step
+             class="text-xs text-ink-400 hover:text-ink-600
+                    underline underline-offset-2 transition-colors">
+            Skip this step for now
           </a>
         </div>
         {% endif %}
       </form>
     </div>
 
-    <p class="text-center text-xs text-slate-400 mt-4">
-      Already have an account?
-      <a href="{% url 'accounts:login' %}" class="text-primary-500 hover:underline">Sign in</a>
-    </p>
+    <!-- ── Footer note ── -->
+    <div class="text-center mt-5 space-y-2">
+      <p class="text-xs text-ink-400">
+        Already have an account?
+        <a href="{% url 'accounts:login' %}"
+           class="text-green-700 font-medium hover:underline">Sign in</a>
+      </p>
+      <p class="text-xs text-ink-300">
+        <i class="fa-solid fa-lock text-[10px]"></i>
+        Your data is secure and isolated to your business only.
+      </p>
+    </div>
+
   </div>
 </div>
-
-<script>
-  function onboardingStep() {
-    return {
-      init() {
-        // Auto-focus first input
-        const first = this.$el.querySelector('input:not([type=hidden]), select');
-        if (first) setTimeout(() => first.focus(), 100);
-      }
-    }
-  }
-</script>
 {% endblock %}

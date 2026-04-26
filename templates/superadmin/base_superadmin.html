@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% block body %}
+
+<div class="flex h-screen overflow-hidden"
+     x-data="{ sb: true, mob: false }">
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside :style="sb ? 'width:220px' : 'width:56px'"
+         style="transition:width .2s ease"
+         class="hidden md:flex flex-col flex-shrink-0 h-full overflow-hidden
+                bg-ink-900">
+
+    <!-- Logo -->
+    <div class="flex items-center h-14 px-3 flex-shrink-0
+                border-b border-ink-800">
+      <div class="w-8 h-8 rounded-xl bg-yellow-400 flex items-center
+                  justify-center flex-shrink-0">
+        <i class="fa-solid fa-bolt text-ink-900 text-sm"></i>
+      </div>
+      <div x-show="sb" x-transition.opacity class="ml-2.5 min-w-0">
+        <p class="text-xs font-extrabold text-white leading-none">Vendly</p>
+        <p class="text-[10px] text-yellow-400 font-semibold uppercase
+                  tracking-wider leading-none mt-0.5">Super Admin</p>
+      </div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="flex-1 overflow-y-auto py-3 px-2 space-y-0.5">
+      {% with ns=request.resolver_match.url_name %}
+
+      <a href="{% url 'superadmin:dashboard' %}"
+         class="slink {% if ns == 'dashboard' %}active{% endif %}">
+        <i class="fa-solid fa-gauge w-4 text-center flex-shrink-0 text-sm"></i>
+        <span x-show="sb" x-transition.opacity class="whitespace-nowrap">Overview</span>
+      </a>
+
+      <a href="{% url 'superadmin:businesses' %}"
+         class="slink {% if ns == 'businesses' %}active{% endif %}">
+        <i class="fa-solid fa-store w-4 text-center flex-shrink-0 text-sm"></i>
+        <span x-show="sb" x-transition.opacity class="whitespace-nowrap">Businesses</span>
+      </a>
+
+      <a href="{% url 'superadmin:users' %}"
+         class="slink {% if ns == 'users' %}active{% endif %}">
+        <i class="fa-solid fa-users w-4 text-center flex-shrink-0 text-sm"></i>
+        <span x-show="sb" x-transition.opacity class="whitespace-nowrap">All Users</span>
+      </a>
+
+      <a href="{% url 'superadmin:licenses' %}"
+         class="slink {% if ns == 'licenses' %}active{% endif %}">
+        <i class="fa-solid fa-shield-halved w-4 text-center flex-shrink-0 text-sm"></i>
+        <span x-show="sb" x-transition.opacity class="whitespace-nowrap">Licenses</span>
+      </a>
+
+      <div class="my-2 border-t border-ink-800"></div>
+
+      <a href="/admin/" target="_blank"
+         class="slink">
+        <i class="fa-solid fa-screwdriver-wrench w-4 text-center flex-shrink-0 text-sm"></i>
+        <span x-show="sb" x-transition.opacity class="whitespace-nowrap">Django Admin</span>
+      </a>
+
+      {% endwith %}
+    </nav>
+
+    <!-- Bottom -->
+    <div class="border-t border-ink-800 px-2 py-2 space-y-0.5 flex-shrink-0">
+      <button @click="sb = !sb" class="slink w-full text-left">
+        <i :class="sb ? 'fa-chevron-left' : 'fa-chevron-right'"
+           class="fa-solid w-4 text-center flex-shrink-0 text-sm"></i>
+        <span x-show="sb" x-transition.opacity class="whitespace-nowrap">Collapse</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ══ MAIN ══ -->
+  <div class="flex-1 flex flex-col overflow-hidden min-w-0">
+
+    <!-- Topbar -->
+    <header class="h-14 flex-shrink-0 flex items-center justify-between px-4 gap-3
+                   bg-white border-b-2 border-yellow-400">
+      <div class="flex items-center gap-3">
+        <button @click="mob = true"
+                class="md:hidden text-ink-500 hover:text-ink-700">
+          <i class="fa-solid fa-bars text-lg"></i>
+        </button>
+        <div>
+          <h1 class="text-sm font-semibold text-ink-800 leading-tight">
+            {% block page_title %}Super Admin{% endblock %}
+          </h1>
+          <p class="text-[10px] text-yellow-600 font-semibold uppercase tracking-wide">
+            Platform Management
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div class="hidden sm:flex items-center gap-2 px-3 py-1.5
+                    bg-yellow-50 border border-yellow-200 rounded-xl">
+          <div class="w-5 h-5 rounded-full bg-yellow-400 flex items-center
+                      justify-center text-ink-900 font-bold text-[10px]">
+            {{ request.user.username|slice:":1"|upper }}
+          </div>
+          <span class="text-xs font-semibold text-ink-700">
+            {{ request.user.username }}
+          </span>
+          <span class="text-[10px] bg-yellow-400 text-ink-900 font-bold
+                       px-1.5 py-0.5 rounded-full">SUPER</span>
+        </div>
+        <a href="{% url 'accounts:logout' %}"
+           class="text-xs text-red-400 hover:text-red-600 font-medium
+                  flex items-center gap-1 transition-colors">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          <span class="hidden sm:block">Sign out</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <main class="flex-1 overflow-y-auto p-4 page-fade bg-ink-50">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</div>
+{% endblock %}

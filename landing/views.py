@@ -2,11 +2,87 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib import messages
 from accounts.models import CustomUser
-from tenants.models import Business
-
+from tenants.models import Business, OnboardingProgress
+from django.utils import timezone
 
 def index(request):
-    return render(request, 'landing/index.html')
+    if request.user.is_authenticated:
+        return redirect('dashboard:home')
+
+    features = [
+        {
+            'icon': 'fa-cash-register',
+            'color': 'green',
+            'title': 'Fast Point of Sale',
+            'description': 'Ring up sales in seconds. Add products to cart, apply discounts, and accept cash or MPESA instantly.',
+        },
+        {
+            'icon': 'fa-boxes-stacked',
+            'color': 'yellow',
+            'title': 'Inventory Tracking',
+            'description': 'Stock levels update automatically on every sale. Get alerts before you run out of your best sellers.',
+        },
+        {
+            'icon': 'fa-chart-line',
+            'color': 'green',
+            'title': 'Sales Analytics',
+            'description': 'Daily, weekly, and monthly reports. See your best products, busiest hours, and revenue trends.',
+        },
+        {
+            'icon': 'fa-users',
+            'color': 'yellow',
+            'title': 'Staff Management',
+            'description': 'Add cashiers and managers with their own logins. Control exactly what each person can see and do.',
+        },
+        {
+            'icon': 'fa-receipt',
+            'color': 'green',
+            'title': 'Digital Receipts',
+            'description': 'Print receipts or share them via WhatsApp instantly. Customers love it, paper waste gone.',
+        },
+        {
+            'icon': 'fa-shield-halved',
+            'color': 'yellow',
+            'title': 'Secure & Isolated',
+            'description': 'Every business is completely isolated. Your data is yours — no sharing, no mixing, ever.',
+        },
+    ]
+
+    basic_features = [
+        'Up to 500 products',
+        'Unlimited daily sales',
+        'Cash & MPESA payments',
+        'Basic sales reports',
+        '2 staff accounts',
+        'Digital receipts',
+        'Email support',
+    ]
+    business_types: [
+    ('fa-store',    'Retail'),
+    ('fa-pills',    'Pharmacy'),
+    ('fa-scissors', 'Salon'),
+    ('fa-utensils', 'Restaurant'),
+    ('fa-warehouse','Wholesale'),
+    ('fa-seedling', 'Agro'),
+]
+    pro_features = [
+        'Unlimited products',
+        'Unlimited daily sales',
+        'Cash, MPESA & Paystack',
+        'Advanced analytics',
+        'Unlimited staff accounts',
+        'WhatsApp receipts',
+        'Low stock alerts',
+        'CSV import/export',
+        'Priority support',
+    ]
+
+    return render(request, 'landing/index.html', {
+        'features':       features,
+        'basic_features': basic_features,
+        'pro_features':   pro_features,
+        'today':          timezone.now(),
+    })
 
 
 def enter_demo(request):

@@ -1,0 +1,51 @@
+{% extends 'superadmin/base_superadmin.html' %}
+{% block page_title %}All Users{% endblock %}
+{% block content %}
+<div class="bg-white rounded-2xl border-2 border-ink-100 p-5">
+  <h3 class="text-sm font-semibold text-ink-800 mb-4">
+    {{ users.count }} registered users
+  </h3>
+  <div class="overflow-x-auto">
+    <table class="w-full text-xs">
+      <thead>
+        <tr class="text-ink-400 border-b border-ink-100">
+          <th class="text-left pb-3 font-semibold">User</th>
+          <th class="text-left pb-3 font-semibold">Role</th>
+          <th class="text-left pb-3 font-semibold">Business</th>
+          <th class="text-left pb-3 font-semibold">Joined</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-ink-50">
+        {% for u in users %}
+        <tr class="hover:bg-ink-50">
+          <td class="py-3">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-full bg-green-100 flex items-center
+                          justify-center text-green-700 font-bold text-[10px]">
+                {{ u.username|slice:":1"|upper }}
+              </div>
+              <div>
+                <p class="font-medium text-ink-800">{{ u.username }}</p>
+                <p class="text-ink-400">{{ u.email }}</p>
+              </div>
+            </div>
+          </td>
+          <td class="py-3">
+            <span class="badge text-[10px]
+              {% if u.is_superuser %}badge-yellow
+              {% elif u.role == 'owner' %}badge-green
+              {% else %}badge-red{% endif %}">
+              {% if u.is_superuser %}superadmin{% else %}{{ u.role }}{% endif %}
+            </span>
+          </td>
+          <td class="py-3 text-ink-600">
+            {{ u.tenant.name|default:"—" }}
+          </td>
+          <td class="py-3 text-ink-400">{{ u.date_joined|date:"d M Y" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

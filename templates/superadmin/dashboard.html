@@ -1,0 +1,117 @@
+{% extends 'superadmin/base_superadmin.html' %}
+{% block page_title %}Platform Overview{% endblock %}
+
+{% block content %}
+
+<!-- KPI row -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+
+  <div class="bg-white rounded-2xl border-2 border-ink-100 p-4
+              hover:border-green-300 transition-colors">
+    <div class="flex items-center justify-between mb-3">
+      <span class="text-xs font-medium text-ink-400">Total businesses</span>
+      <div class="w-9 h-9 rounded-xl bg-green-100 flex items-center justify-center">
+        <i class="fa-solid fa-store text-green-700 text-sm"></i>
+      </div>
+    </div>
+    <p class="text-2xl font-extrabold text-ink-900">{{ total_businesses }}</p>
+  </div>
+
+  <div class="bg-white rounded-2xl border-2 border-ink-100 p-4
+              hover:border-green-300 transition-colors">
+    <div class="flex items-center justify-between mb-3">
+      <span class="text-xs font-medium text-ink-400">Active businesses</span>
+      <div class="w-9 h-9 rounded-xl bg-yellow-100 flex items-center justify-center">
+        <i class="fa-solid fa-circle-check text-yellow-700 text-sm"></i>
+      </div>
+    </div>
+    <p class="text-2xl font-extrabold text-ink-900">{{ active_businesses }}</p>
+  </div>
+
+  <div class="bg-white rounded-2xl border-2 border-ink-100 p-4
+              hover:border-green-300 transition-colors">
+    <div class="flex items-center justify-between mb-3">
+      <span class="text-xs font-medium text-ink-400">Total users</span>
+      <div class="w-9 h-9 rounded-xl bg-green-100 flex items-center justify-center">
+        <i class="fa-solid fa-users text-green-700 text-sm"></i>
+      </div>
+    </div>
+    <p class="text-2xl font-extrabold text-ink-900">{{ total_users }}</p>
+  </div>
+
+  <div class="bg-white rounded-2xl border-2 border-ink-100 p-4
+              hover:border-yellow-300 transition-colors">
+    <div class="flex items-center justify-between mb-3">
+      <span class="text-xs font-medium text-ink-400">Today</span>
+      <div class="w-9 h-9 rounded-xl bg-yellow-100 flex items-center justify-center">
+        <i class="fa-solid fa-calendar text-yellow-700 text-sm"></i>
+      </div>
+    </div>
+    <p class="text-sm font-bold text-ink-900">{{ today|date:"D, d M" }}</p>
+  </div>
+</div>
+
+<!-- Recent businesses table -->
+<div class="bg-white rounded-2xl border-2 border-ink-100 p-5">
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="text-sm font-semibold text-ink-800">Recent businesses</h3>
+    <a href="{% url 'superadmin:businesses' %}"
+       class="text-xs text-green-700 font-medium hover:underline">
+      View all →
+    </a>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="text-xs text-ink-400 border-b border-ink-100">
+          <th class="text-left pb-3 font-semibold">Business</th>
+          <th class="text-left pb-3 font-semibold">Type</th>
+          <th class="text-left pb-3 font-semibold">Country</th>
+          <th class="text-left pb-3 font-semibold">Currency</th>
+          <th class="text-left pb-3 font-semibold">Status</th>
+          <th class="text-left pb-3 font-semibold">Joined</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-ink-50">
+        {% for b in recent_businesses %}
+        <tr class="hover:bg-ink-50 transition-colors">
+          <td class="py-3">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-xl bg-green-100 flex items-center
+                          justify-center flex-shrink-0 text-green-700 font-bold text-xs">
+                {{ b.name|slice:":1"|upper }}
+              </div>
+              <div>
+                <p class="font-semibold text-ink-800 text-xs">{{ b.name }}</p>
+                <p class="text-[10px] text-ink-400">{{ b.slug }}</p>
+              </div>
+            </div>
+          </td>
+          <td class="py-3 text-xs text-ink-600 capitalize">
+            {{ b.get_business_type_display }}
+          </td>
+          <td class="py-3 text-xs text-ink-600">{{ b.country }}</td>
+          <td class="py-3 text-xs font-mono text-ink-600">{{ b.currency }}</td>
+          <td class="py-3">
+            <span class="badge text-[10px]
+              {% if b.is_active %}badge-green{% else %}badge-red{% endif %}">
+              {% if b.is_active %}Active{% else %}Inactive{% endif %}
+            </span>
+          </td>
+          <td class="py-3 text-xs text-ink-400">
+            {{ b.created_at|date:"d M Y" }}
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="py-10 text-center text-ink-400 text-xs">
+            No businesses registered yet.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
