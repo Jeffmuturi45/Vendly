@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Sign in{% endblock %}
+
+{% block body %}
+<div class="min-h-screen flex">
+
+  <!-- Left panel — branding -->
+  <div class="hidden lg:flex lg:w-1/2 bg-primary flex-col justify-between p-12">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+        <i class="fa-solid fa-bolt text-white"></i>
+      </div>
+      <span class="text-2xl font-bold text-white tracking-tight">Vendly</span>
+    </div>
+    <div>
+      <h2 class="text-3xl font-bold text-white leading-snug mb-4">
+        Run your business<br/>smarter, faster.
+      </h2>
+      <p class="text-primary-200 text-sm leading-relaxed max-w-sm">
+        Point of sale, inventory, staff management and analytics — all in one place.
+        Built for small and medium businesses across Africa and beyond.
+      </p>
+    </div>
+    <p class="text-primary-300 text-xs">© {{ today.year }} Vendly. All rights reserved.</p>
+  </div>
+
+  <!-- Right panel — form -->
+  <div class="flex-1 flex items-center justify-center p-6 lg:p-12
+              bg-slate-50 dark:bg-slate-900">
+    <div class="w-full max-w-md">
+
+      <!-- Mobile logo -->
+      <div class="flex items-center gap-2 mb-8 lg:hidden">
+        <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+          <i class="fa-solid fa-bolt text-white text-xs"></i>
+        </div>
+        <span class="text-xl font-bold text-primary-500">Vendly</span>
+      </div>
+
+      <h1 class="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-1">Welcome back</h1>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mb-8">
+        Sign in to your Vendly account
+      </p>
+
+      <form method="post" class="space-y-5">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit"
+          class="w-full bg-primary hover:bg-primary-600 text-white font-semibold
+                 py-2.5 px-4 rounded-xl transition-colors flex items-center
+                 justify-center gap-2">
+          <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign in
+        </button>
+      </form>
+
+      <p class="mt-6 text-center text-sm text-slate-500">
+        Don't have an account?
+        <a href="{% url 'tenants:onboarding' %}"
+           class="text-primary-500 font-semibold hover:underline">
+          Start free trial
+        </a>
+      </p>
+
+      <div class="mt-4 text-center">
+        <a href="{% url 'landing:demo' %}"
+           class="text-xs text-slate-400 hover:text-primary-500 transition-colors">
+          <i class="fa-solid fa-play-circle mr-1"></i> Try the live demo instead
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

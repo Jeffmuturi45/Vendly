@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Set up your business{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-primary-50
+            dark:from-slate-900 dark:to-slate-800 flex items-center justify-center p-6">
+  <div class="w-full max-w-xl">
+
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center gap-2 mb-4">
+        <div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center">
+          <i class="fa-solid fa-bolt text-white"></i>
+        </div>
+        <span class="text-xl font-bold text-primary-500">Vendly</span>
+      </div>
+      <h1 class="text-2xl font-bold text-slate-800 dark:text-slate-100">
+        Let's set up your business
+      </h1>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+        Step {{ step }} of {{ total_steps }} — {{ step_title }}
+      </p>
+    </div>
+
+    <!-- Step progress -->
+    <div class="flex items-center gap-2 mb-8">
+      {% for i in steps_range %}
+      <div class="flex-1 h-1.5 rounded-full transition-all duration-500
+        {% if i < step %}bg-primary
+        {% elif i == step %}bg-primary-300
+        {% else %}bg-slate-200 dark:bg-slate-700{% endif %}"></div>
+      {% endfor %}
+    </div>
+
+    <!-- Card -->
+    <div class="bg-white dark:bg-slate-800 rounded-2xl border
+                border-slate-200 dark:border-slate-700 p-8 shadow-sm"
+         x-data="onboardingStep()">
+
+      <form method="post" enctype="multipart/form-data" class="space-y-5">
+        {% csrf_token %}
+        {{ form|crispy }}
+
+        <div class="flex items-center gap-3 pt-2">
+          {% if step > 1 %}
+          <a href="?step={{ step|add:'-1' }}"
+             class="flex-1 py-2.5 px-4 rounded-xl border border-slate-200
+                    dark:border-slate-600 text-sm font-medium text-slate-600
+                    dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700
+                    transition-colors text-center">
+            <i class="fa-solid fa-arrow-left mr-2"></i> Back
+          </a>
+          {% endif %}
+
+          <button type="submit"
+            class="flex-1 bg-primary hover:bg-primary-600 text-white font-semibold
+                   py-2.5 px-4 rounded-xl transition-colors flex items-center
+                   justify-center gap-2">
+            {% if step == total_steps %}
+              <i class="fa-solid fa-rocket"></i> Launch my dashboard
+            {% else %}
+              Continue <i class="fa-solid fa-arrow-right"></i>
+            {% endif %}
+          </button>
+        </div>
+
+        {% if step < total_steps and step > 1 %}
+        <div class="text-center">
+          <a href="?skip=1"
+             class="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+            Skip this step
+          </a>
+        </div>
+        {% endif %}
+      </form>
+    </div>
+
+    <p class="text-center text-xs text-slate-400 mt-4">
+      Already have an account?
+      <a href="{% url 'accounts:login' %}" class="text-primary-500 hover:underline">Sign in</a>
+    </p>
+  </div>
+</div>
+
+<script>
+  function onboardingStep() {
+    return {
+      init() {
+        // Auto-focus first input
+        const first = this.$el.querySelector('input:not([type=hidden]), select');
+        if (first) setTimeout(() => first.focus(), 100);
+      }
+    }
+  }
+</script>
+{% endblock %}

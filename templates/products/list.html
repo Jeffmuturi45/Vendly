@@ -1,0 +1,157 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% block page_title %}Products{% endblock %}
+{% block page_subtitle %}
+  <p class="text-xs text-ink-400">{{ total }} product{{ total|pluralize }}
+    {% if low_count %} · <span class="text-yellow-600 font-medium">{{ low_count }} low stock</span>{% endif %}
+  </p>
+{% endblock %}
+
+{% block content %}
+
+<!-- Toolbar -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+  <form method="get" class="flex items-center gap-2 flex-1 max-w-md">
+    <div class="relative flex-1">
+      <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2
+                text-ink-400 text-sm pointer-events-none"></i>
+      <input type="text" name="q" value="{{ q }}"
+             placeholder="Search products or barcode…"
+             class="pl-9 pr-4 py-2 w-full rounded-xl border-2 border-ink-200
+                    focus:border-green-500 focus:ring-0 text-sm
+                    bg-white dark:bg-ink-800 dark:border-ink-700"/>
+    </div>
+    <select name="cat"
+            class="py-2 px-3 rounded-xl border-2 border-ink-200 dark:border-ink-700
+                   text-sm bg-white dark:bg-ink-800 focus:border-green-500"
+            onchange="this.form.submit()">
+      <option value="">All categories</option>
+      {% for c in categories %}
+      <option value="{{ c.pk }}" {% if cat_id == c.pk|stringformat:"s" %}selected{% endif %}>
+        {{ c.name }}
+      </option>
+      {% endfor %}
+    </select>
+    <select name="status"
+            class="py-2 px-3 rounded-xl border-2 border-ink-200 dark:border-ink-700
+                   text-sm bg-white dark:bg-ink-800 focus:border-green-500"
+            onchange="this.form.submit()">
+      <option value="">All</option>
+      <option value="active"   {% if status == 'active' %}selected{% endif %}>Active</option>
+      <option value="inactive" {% if status == 'inactive' %}selected{% endif %}>Inactive</option>
+      <option value="low"      {% if status == 'low' %}selected{% endif %}>Low stock</option>
+    </select>
+  </form>
+
+  <a href="{% url 'products:add' %}" class="btn-primary flex-shrink-0">
+    <i class="fa-solid fa-plus"></i> Add product
+  </a>
+</div>
+
+<!-- Product grid -->
+{% if products %}
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+  {% for p in products %}
+  <div class="bg-white dark:bg-ink-800 rounded-2xl border-2
+              {% if p.is_low_stock %}border-yellow-300 dark:border-yellow-700
+              {% else %}border-ink-100 dark:border-ink-700{% endif %}
+              hover:border-green-300 dark:hover:border-green-700
+              transition-all group">
+
+    <!-- Product image / placeholder -->
+    <div class="h-36 rounded-t-2xl overflow-hidden bg-ink-50 dark:bg-ink-700
+                flex items-center justify-center">
+      {% if p.image %}
+        <img src="{{ p.image.url }}" alt="{{ p.name }}"
+             class="w-full h-full object-cover"/>
+      {% else %}
+        <i class="fa-solid fa-box-open text-3xl text-ink-300
+                  dark:text-ink-600 group-hover:text-green-400 transition-colors"></i>
+      {% endif %}
+    </div>
+
+    <div class="p-3">
+      <!-- Name + status -->
+      <div class="flex items-start justify-between gap-2 mb-1">
+        <h3 class="text-sm font-semibold text-ink-800 dark:text-ink-100
+                   leading-tight line-clamp-2">{{ p.name }}</h3>
+        {% if not p.is_active %}
+        <span class="badge badge-red flex-shrink-0">Off</span>
+        {% endif %}
+      </div>
+
+      {% if p.category %}
+      <p class="text-xs text-ink-400 mb-2">{{ p.category.name }}</p>
+      {% endif %}
+
+      <!-- Price row -->
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-base font-bold text-green-700 dark:text-green-400">
+          {{ request.tenant.currency|default:"KES" }} {{ p.price|floatformat:2 }}
+        </span>
+        <span class="text-xs {% if p.is_low_stock %}text-yellow-600 font-semibold{% else %}text-ink-400{% endif %}">
+          {% if p.is_low_stock %}
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          {% endif %}
+          {{ p.stock }} in stock
+        </span>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-1.5">
+        <a href="{% url 'products:edit' p.pk %}"
+           class="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg
+                  bg-ink-100 dark:bg-ink-700 text-ink-600 dark:text-ink-300
+                  hover:bg-green-100 hover:text-green-700
+                  dark:hover:bg-green-900/30 dark:hover:text-green-300
+                  text-xs font-medium transition-colors">
+          <i class="fa-solid fa-pen-to-square"></i> Edit
+        </a>
+        <form method="post" action="{% url 'products:toggle' p.pk %}" class="flex-1">
+          {% csrf_token %}
+          <button type="submit"
+                  class="w-full flex items-center justify-center gap-1 py-1.5 rounded-lg
+                         {% if p.is_active %}
+                           bg-yellow-50 text-yellow-700 hover:bg-yellow-100
+                           dark:bg-yellow-900/20 dark:text-yellow-300
+                         {% else %}
+                           bg-green-50 text-green-700 hover:bg-green-100
+                           dark:bg-green-900/20 dark:text-green-300
+                         {% endif %}
+                         text-xs font-medium transition-colors">
+            <i class="fa-solid {% if p.is_active %}fa-eye-slash{% else %}fa-eye{% endif %}"></i>
+            {% if p.is_active %}Hide{% else %}Show{% endif %}
+          </button>
+        </form>
+        <a href="{% url 'products:delete' p.pk %}"
+           class="w-8 h-8 flex items-center justify-center rounded-lg
+                  bg-red-50 dark:bg-red-900/20 text-red-400 hover:bg-red-100
+                  hover:text-red-600 transition-colors flex-shrink-0">
+          <i class="fa-solid fa-trash text-xs"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% else %}
+<!-- Empty state -->
+<div class="flex flex-col items-center justify-center py-24 text-center">
+  <div class="w-20 h-20 rounded-3xl bg-green-100 dark:bg-green-900/30
+              flex items-center justify-center mb-4">
+    <i class="fa-solid fa-box-open text-3xl text-green-500"></i>
+  </div>
+  <h3 class="text-base font-semibold text-ink-700 dark:text-ink-200 mb-1">
+    No products yet
+  </h3>
+  <p class="text-sm text-ink-400 mb-6 max-w-xs">
+    Add your first product to start selling.
+    You can also import from a CSV later.
+  </p>
+  <a href="{% url 'products:add' %}" class="btn-primary">
+    <i class="fa-solid fa-plus"></i> Add your first product
+  </a>
+</div>
+{% endif %}
+
+{% endblock %}

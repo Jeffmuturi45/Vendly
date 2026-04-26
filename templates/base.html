@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en"
+      x-data="{ darkMode: localStorage.getItem('vdark')==='1' }"
+      :class="{ 'dark': darkMode }"
+      x-init="$watch('darkMode', v => localStorage.setItem('vdark', v?'1':'0'))">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}Vendly{% endblock %} — Smart Business POS</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            green: {
+              50:  '#f0fdf4',
+              100: '#dcfce7',
+              200: '#bbf7d0',
+              300: '#86efac',
+              400: '#4ade80',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#1a7a4a',
+              800: '#166534',
+              900: '#14532d',
+            },
+            yellow: {
+              50:  '#fefce8',
+              100: '#fef9c3',
+              200: '#fef08a',
+              300: '#fde047',
+              400: '#facc15',
+              500: '#f59e0b',
+              600: '#d97706',
+              700: '#b45309',
+              800: '#92400e',
+              900: '#78350f',
+            },
+            ink: {
+              50:  '#f8fafc',
+              100: '#f1f5f9',
+              200: '#e2e8f0',
+              300: '#cbd5e1',
+              400: '#94a3b8',
+              500: '#64748b',
+              600: '#475569',
+              700: '#334155',
+              800: '#1e293b',
+              900: '#0f172a',
+            }
+          },
+          fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui'] },
+        }
+      }
+    }
+  </script>
+
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet"/>
+  <script defer
+    src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.13.3/cdn.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+  <style>
+    [x-cloak] { display: none !important; }
+
+    /* ── scrollbar ── */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
+    .dark ::-webkit-scrollbar-thumb { background: #334155; }
+
+    /* ── toast ── */
+    #toast-wrap {
+      position: fixed; top: 1.25rem; right: 1.25rem;
+      z-index: 9999; display: flex; flex-direction: column;
+      gap: .5rem; pointer-events: none;
+    }
+    .vtoast {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .875rem 1.125rem; border-radius: .875rem;
+      font-size: .8125rem; font-weight: 500;
+      min-width: 280px; max-width: 360px; pointer-events: all;
+      box-shadow: 0 8px 32px rgba(0,0,0,.15);
+      animation: tin .3s ease;
+    }
+    .vtoast.success { background:#dcfce7; color:#166534; border-left:3px solid #22c55e; }
+    .vtoast.error   { background:#fee2e2; color:#7f1d1d; border-left:3px solid #ef4444; }
+    .vtoast.warning { background:#fef9c3; color:#78350f; border-left:3px solid #f59e0b; }
+    .vtoast.info    { background:#dbeafe; color:#1e3a5f; border-left:3px solid #3b82f6; }
+    @keyframes tin  { from{transform:translateX(110%);opacity:0} to{transform:translateX(0);opacity:1} }
+    @keyframes tout { from{transform:translateX(0);opacity:1} to{transform:translateX(110%);opacity:0} }
+    .vtoast.out { animation: tout .3s ease forwards; }
+
+    /* ── form inputs ── */
+    .vendly-input,
+    input[type=text], input[type=email], input[type=password],
+    input[type=number], input[type=search], input[type=tel],
+    select, textarea {
+      width: 100%; padding: .625rem .875rem; font-size: .875rem;
+      border: 1.5px solid #e2e8f0; border-radius: .625rem;
+      background: #fff; color: #1e293b; outline: none;
+      transition: border-color .15s, box-shadow .15s;
+      font-family: inherit;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #22c55e;
+      box-shadow: 0 0 0 3px rgba(34,197,94,.15);
+    }
+    .dark input, .dark select, .dark textarea {
+      background: #1e293b; border-color: #334155; color: #f1f5f9;
+    }
+    .dark input:focus, .dark select:focus, .dark textarea:focus {
+      border-color: #22c55e;
+    }
+    label {
+      display: block; font-size: .8125rem; font-weight: 500;
+      color: #334155; margin-bottom: .375rem;
+    }
+    .dark label { color: #cbd5e1; }
+    .invalid-feedback, .errorlist {
+      color: #ef4444; font-size: .75rem; margin-top: .25rem; list-style: none; padding: 0;
+    }
+
+    /* ── sidebar link ── */
+    .slink {
+      display: flex; align-items: center; gap: .625rem;
+      padding: .5rem .75rem; border-radius: .625rem;
+      color: #86efac;                       /* green-300 — readable on dark bg */
+      font-size: .875rem; font-weight: 500;
+      text-decoration: none; white-space: nowrap;
+      transition: background .15s, color .15s;
+    }
+    .slink:hover { background: rgba(34,197,94,.15); color: #fff; }
+    .slink.active {
+      background: #22c55e; color: #fff; font-weight: 600;
+    }
+    .slink.active i { color: #fff; }
+
+    /* ── dropdown item ── */
+    .dditem {
+      display: flex; align-items: center; gap: .5rem;
+      padding: .45rem .875rem; font-size: .8125rem;
+      color: #475569; text-decoration: none;
+      transition: background .1s;
+    }
+    .dditem:hover { background: #f0fdf4; color: #166534; }
+    .dark .dditem { color: #cbd5e1; }
+    .dark .dditem:hover { background: #1a7a4a22; color: #86efac; }
+
+    /* ── demo bar ── */
+    .demo-bar {
+      background: linear-gradient(90deg, #1a7a4a, #22c55e);
+      color: #fff; font-size: .75rem; font-weight: 600;
+      text-align: center; padding: .4rem 1rem; letter-spacing: .02em;
+    }
+
+    /* ── page fade ── */
+    .page-fade { animation: pfade .2s ease; }
+    @keyframes pfade {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── cards ── */
+    .vcard {
+      background: #fff; border-radius: 1rem;
+      border: 1px solid #e2e8f0; padding: 1.25rem;
+    }
+    .dark .vcard { background: #1e293b; border-color: #334155; }
+
+    /* ── btn-primary ── */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: #22c55e; color: #fff; font-size: .875rem;
+      font-weight: 600; padding: .625rem 1.25rem;
+      border-radius: .625rem; border: none; cursor: pointer;
+      transition: background .15s;
+      text-decoration: none;
+    }
+    .btn-primary:hover { background: #16a34a; }
+
+    /* ── btn-yellow ── */
+    .btn-yellow {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: #f59e0b; color: #fff; font-size: .875rem;
+      font-weight: 600; padding: .625rem 1.25rem;
+      border-radius: .625rem; border: none; cursor: pointer;
+      transition: background .15s; text-decoration: none;
+    }
+    .btn-yellow:hover { background: #d97706; }
+
+    /* ── badge ── */
+    .badge-green  { background: #dcfce7; color: #166534; }
+    .badge-yellow { background: #fef9c3; color: #78350f; }
+    .badge-red    { background: #fee2e2; color: #7f1d1d; }
+    .badge {
+      display: inline-block; padding: .15rem .6rem;
+      border-radius: 99px; font-size: .7rem; font-weight: 600;
+    }
+  </style>
+
+  {% block extra_head %}{% endblock %}
+</head>
+
+<body class="bg-ink-50 text-ink-800 font-sans antialiased
+             dark:bg-ink-900 dark:text-ink-100">
+
+  {% if request.session.demo_mode %}
+  <div class="demo-bar">
+    <i class="fa-solid fa-flask mr-1"></i>
+    DEMO MODE — Data resets every 30 min. &nbsp;
+    <a href="{% url 'tenants:onboarding' %}"
+       class="underline hover:no-underline">Create your free account →</a>
+  </div>
+  {% endif %}
+
+  <div id="toast-wrap"></div>
+
+  {% if messages %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      {% for m in messages %}
+        Vendly.toast('{{ m|escapejs }}',
+          '{{ m.tags }}'.includes('error')   ? 'error'   :
+          '{{ m.tags }}'.includes('warning') ? 'warning' :
+          '{{ m.tags }}'.includes('success') ? 'success' : 'info');
+      {% endfor %}
+    });
+  </script>
+  {% endif %}
+
+  {% block body %}{% endblock %}
+
+  <script>
+    const Vendly = {
+      toast(msg, type='info', ms=4500) {
+        const icons = {
+          success: 'fa-circle-check', error: 'fa-circle-xmark',
+          warning: 'fa-triangle-exclamation', info: 'fa-circle-info'
+        };
+        const el = document.createElement('div');
+        el.className = `vtoast ${type}`;
+        el.innerHTML = `
+          <i class="fa-solid ${icons[type]||icons.info} text-base flex-shrink-0"></i>
+          <span class="flex-1">${msg}</span>
+          <button onclick="Vendly._rm(this.parentElement)"
+            class="opacity-50 hover:opacity-100 ml-1 text-xl leading-none">&times;</button>`;
+        document.getElementById('toast-wrap').appendChild(el);
+        if (ms > 0) setTimeout(() => Vendly._rm(el), ms);
+      },
+      _rm(el) {
+        if (!el) return;
+        el.classList.add('out');
+        setTimeout(() => el.remove(), 300);
+      }
+    };
+  </script>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

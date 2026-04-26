@@ -1,0 +1,25 @@
+<div class="bg-white dark:bg-ink-800 rounded-2xl
+            border border-ink-200 dark:border-ink-700 p-4
+            hover:border-green-300 dark:hover:border-green-700
+            transition-colors">
+  <div class="flex items-center justify-between mb-3">
+    <span class="text-xs font-medium text-ink-500 dark:text-ink-400">{{ title }}</span>
+    <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0
+      {% if color == 'green'  %}bg-green-100 text-green-700
+      {% elif color == 'yellow' %}bg-yellow-100 text-yellow-700
+      {% elif color == 'red'    %}bg-red-100 text-red-600
+      {% else %}bg-ink-100 text-ink-500{% endif %}">
+      <i class="fa-solid {{ icon }} text-sm"></i>
+    </div>
+  </div>
+  <p class="text-2xl font-bold text-ink-800 dark:text-ink-100 leading-tight">
+    {% if prefix %}<span class="text-sm font-medium text-ink-400 mr-0.5">{{ prefix }}</span>{% endif %}{{ value|default:"0" }}
+  </p>
+  {% if change is not None %}
+  <p class="text-xs mt-1 flex items-center gap-1
+            {% if change >= 0 %}text-green-600{% else %}text-red-500{% endif %}">
+    <i class="fa-solid {% if change >= 0 %}fa-arrow-trend-up{% else %}fa-arrow-trend-down{% endif %}"></i>
+    {{ change|floatformat:1 }}% vs yesterday
+  </p>
+  {% endif %}
+</div>

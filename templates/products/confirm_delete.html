@@ -1,0 +1,38 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% block page_title %}Delete product{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto">
+  <div class="bg-white dark:bg-ink-800 rounded-2xl
+              border-2 border-red-200 dark:border-red-800 p-6 text-center">
+    <div class="w-14 h-14 rounded-2xl bg-red-100 dark:bg-red-900/30
+                flex items-center justify-center mx-auto mb-4">
+      <i class="fa-solid fa-trash text-2xl text-red-500"></i>
+    </div>
+    <h2 class="text-base font-semibold text-ink-800 dark:text-ink-100 mb-1">
+      Delete "{{ product.name }}"?
+    </h2>
+    <p class="text-sm text-ink-400 mb-6">
+      This will permanently remove the product and cannot be undone.
+      Sales history is preserved.
+    </p>
+    <div class="flex items-center gap-3">
+      <a href="{% url 'products:list' %}"
+         class="flex-1 py-2.5 rounded-xl border-2 border-ink-200
+                dark:border-ink-600 text-sm font-medium text-ink-600
+                dark:text-ink-300 hover:border-ink-400 transition-colors
+                text-center">
+        Cancel
+      </a>
+      <form method="post" class="flex-1">
+        {% csrf_token %}
+        <button type="submit"
+                class="w-full py-2.5 rounded-xl bg-red-500 hover:bg-red-600
+                       text-white text-sm font-semibold transition-colors">
+          Yes, delete it
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

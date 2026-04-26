@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+{% block body %}
+
+<div class="flex h-screen overflow-hidden"
+     x-data="{
+       sb: localStorage.getItem('vsb') !== '0',
+       mob: false,
+       init() { $watch('sb', v => localStorage.setItem('vsb', v ? '1' : '0')) }
+     }">
+
+  <!-- ══ SIDEBAR ══════════════════════════════════════════════════════════ -->
+  <aside :style="sb ? 'width:220px' : 'width:56px'"
+         style="transition:width .2s ease"
+         class="hidden md:flex flex-col flex-shrink-0 h-full overflow-hidden
+                bg-green-900 dark:bg-green-900">
+
+    <!-- Logo -->
+    <div class="flex items-center h-14 px-3 flex-shrink-0
+                border-b border-green-800">
+      <div class="w-8 h-8 rounded-xl bg-yellow-400 flex items-center
+                  justify-center flex-shrink-0 shadow-sm">
+        <i class="fa-solid fa-bolt text-green-900 text-sm"></i>
+      </div>
+      <span x-show="sb" x-transition.opacity.duration.150ms
+            class="ml-2.5 text-base font-bold text-white tracking-tight whitespace-nowrap">
+        Vendly
+      </span>
+    </div>
+
+    <!-- Tenant name -->
+    <div x-show="sb" x-transition.opacity
+         class="mx-3 mt-3 px-3 py-2 rounded-xl bg-green-800 flex-shrink-0">
+      <p class="text-[10px] text-green-300 leading-none mb-0.5 uppercase tracking-wider">
+        Business
+      </p>
+      <p class="text-xs font-semibold text-white truncate">
+        {{ current_tenant.name|default:"My Business" }}
+      </p>
+    </div>
+
+    <!-- Nav -->
+    <nav class="flex-1 overflow-y-auto py-3 px-2 space-y-0.5">
+      {% with ns=request.resolver_match.namespace un=request.resolver_match.url_name %}
+
+      <a href="{% url 'dashboard:home' %}"
+         class="slink {% if ns == 'dashboard' %}active{% endif %}">
+        <i class="fa-solid fa-house w-4 text-center flex-shrink-0"></i>
+        <span x-show="sb" x-transition.opacity class="whitespace-nowrap">Dashboard</span>
+      </a>
+
+      <a href="{% url 'sales:pos' %}"
+         class="slink {% if ns == 'sales' and un == 'pos' %}active{% endif %}">
+        <i class="fa-solid fa-cash-register w-4 text-center flex-shrink-0"></i>
+        <span x-show="sb" x-transition.opacity class="whitespace-nowrap">Point of Sale</span>
+      </a>
+
+      <a href="{% url 'sales:list' %}"
+         class="slink {% if ns == 'sales' and un == 'list' %}active{% endif %}">
+        <i class="fa-solid fa-receipt w-4 text-center flex-shrink-0"></i>
+        <span x-show="sb" x-transition.opacity class="whitespace-nowrap">Transactions</span>
+      </a>
+
+      <a href="{% url 'products:list' %}"
+         class="slink {% if ns == 'products' %}active{% endif %}">
+        <i class="fa-solid fa-box-open w-4 text-center flex-shrink-0"></i>
+        <span x-show="sb" x-transition.opacity class="whitespace-nowrap">Products</span>
+      </a>
+
+      <a href="{% url 'reports:overview' %}"
+         class="slink {% if ns == 'reports' %}active{% endif %}">
+        <i class="fa-solid fa-chart-line w-4 text-center flex-shrink-0"></i>
+        <span x-show="sb" x-transition.opacity class="whitespace-nowrap">Reports</span>
+      </a>
+
+      <a href="{% url 'staff:list' %}"
+         class="slink {% if ns == 'staff' %}active{% endif %}">
+        <i class="fa-solid fa-users w-4 text-center flex-shrink-0"></i>
+        <span x-show="sb" x-transition.opacity class="whitespace-nowrap">Staff</span>
+      </a>
+
+      <div class="my-2 border-t border-green-800"></div>
+
+      <a href="{% url 'licensing:status' %}"
+         class="slink {% if ns == 'licensing' %}active{% endif %}">
+        <i class="fa-solid fa-shield-halved w-4 text-center flex-shrink-0"></i>
+        <span x-show="sb" x-transition.opacity class="whitespace-nowrap">License</span>
+      </a>
+
+      {% endwith %}
+    </nav>
+
+    <!-- Bottom -->
+    <div class="border-t border-green-800 px-2 py-2 space-y-0.5 flex-shrink-0">
+      <button @click="darkMode = !darkMode" class="slink w-full text-left">
+        <i :class="darkMode ? 'fa-sun' : 'fa-moon'"
+           class="fa-solid w-4 text-center flex-shrink-0"></i>
+        <span x-show="sb" x-transition.opacity class="whitespace-nowrap"
+              x-text="darkMode ? 'Light mode' : 'Dark mode'"></span>
+      </button>
+      <button @click="sb = !sb" class="slink w-full text-left">
+        <i :class="sb ? 'fa-chevron-left' : 'fa-chevron-right'"
+           class="fa-solid w-4 text-center flex-shrink-0"></i>
+        <span x-show="sb" x-transition.opacity class="whitespace-nowrap">Collapse</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ══ MOBILE DRAWER ════════════════════════════════════════════════════ -->
+  <div x-show="mob" x-cloak class="fixed inset-0 z-50 md:hidden flex">
+    <div class="absolute inset-0 bg-black/60" @click="mob = false"></div>
+    <aside class="relative w-60 h-full bg-green-900 flex flex-col">
+      <div class="flex items-center h-14 px-4 border-b border-green-800">
+        <div class="w-8 h-8 rounded-xl bg-yellow-400 flex items-center justify-center">
+          <i class="fa-solid fa-bolt text-green-900 text-sm"></i>
+        </div>
+        <span class="ml-2.5 text-base font-bold text-white">Vendly</span>
+        <button @click="mob = false"
+                class="ml-auto text-green-300 hover:text-white">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+      <nav class="flex-1 overflow-y-auto py-3 px-2 space-y-0.5">
+        <a href="{% url 'dashboard:home' %}" class="slink" @click="mob=false">
+          <i class="fa-solid fa-house w-4 text-center"></i> Dashboard
+        </a>
+        <a href="{% url 'sales:pos' %}" class="slink" @click="mob=false">
+          <i class="fa-solid fa-cash-register w-4 text-center"></i> Point of Sale
+        </a>
+        <a href="{% url 'sales:list' %}" class="slink" @click="mob=false">
+          <i class="fa-solid fa-receipt w-4 text-center"></i> Transactions
+        </a>
+        <a href="{% url 'products:list' %}" class="slink" @click="mob=false">
+          <i class="fa-solid fa-box-open w-4 text-center"></i> Products
+        </a>
+        <a href="{% url 'reports:overview' %}" class="slink" @click="mob=false">
+          <i class="fa-solid fa-chart-line w-4 text-center"></i> Reports
+        </a>
+        <a href="{% url 'staff:list' %}" class="slink" @click="mob=false">
+          <i class="fa-solid fa-users w-4 text-center"></i> Staff
+        </a>
+        <a href="{% url 'licensing:status' %}" class="slink" @click="mob=false">
+          <i class="fa-solid fa-shield-halved w-4 text-center"></i> License
+        </a>
+      </nav>
+      <div class="border-t border-green-800 px-4 py-3">
+        <a href="{% url 'accounts:logout' %}"
+           class="flex items-center gap-2 text-sm text-red-400 hover:text-red-300">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign out
+        </a>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ══ MAIN AREA ════════════════════════════════════════════════════════ -->
+  <div class="flex-1 flex flex-col overflow-hidden min-w-0">
+
+    <!-- Topbar -->
+    <header class="h-14 flex-shrink-0 flex items-center justify-between px-4 gap-3
+                   bg-white dark:bg-ink-900
+                   border-b-2 border-green-500">
+
+      <div class="flex items-center gap-3 min-w-0">
+        <button @click="mob = true"
+                class="md:hidden text-ink-500 hover:text-green-600">
+          <i class="fa-solid fa-bars text-lg"></i>
+        </button>
+        <div class="min-w-0">
+          <h1 class="text-sm font-semibold text-ink-800 dark:text-ink-100 truncate">
+            {% block page_title %}Dashboard{% endblock %}
+          </h1>
+          {% block page_subtitle %}{% endblock %}
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 flex-shrink-0">
+
+        <!-- New sale -->
+        <a href="{% url 'sales:pos' %}" class="btn-primary text-xs py-1.5 px-3 hidden sm:flex">
+          <i class="fa-solid fa-plus text-[10px]"></i> New sale
+        </a>
+
+        <!-- Bell -->
+        <button class="relative w-8 h-8 flex items-center justify-center
+                       text-ink-400 hover:text-green-600 rounded-lg
+                       hover:bg-green-50 transition-colors">
+          <i class="fa-solid fa-bell text-base"></i>
+        </button>
+
+        <!-- User dropdown -->
+        <div class="relative" x-data="{ open: false }">
+          <button @click="open = !open" @click.outside="open = false"
+                  class="flex items-center gap-2 px-2 py-1 rounded-xl
+                         hover:bg-green-50 dark:hover:bg-green-900/30 transition-colors">
+            <div class="w-7 h-7 rounded-full bg-green-600 flex items-center
+                        justify-center text-white font-bold text-xs flex-shrink-0">
+              {{ request.user.get_short_name|slice:":1"|upper|default:"U" }}
+            </div>
+            <span class="hidden sm:block text-xs font-medium
+                         text-ink-700 dark:text-ink-200 max-w-[90px] truncate">
+              {{ request.user.get_short_name|default:request.user.username }}
+            </span>
+            <i class="fa-solid fa-chevron-down text-[10px] text-ink-400 hidden sm:block"></i>
+          </button>
+
+          <div x-show="open" x-cloak
+               x-transition:enter="transition ease-out duration-100"
+               x-transition:enter-start="opacity-0 scale-95"
+               x-transition:enter-end="opacity-100 scale-100"
+               class="absolute right-0 top-10 w-48 bg-white dark:bg-ink-800
+                      border border-ink-200 dark:border-ink-700
+                      rounded-2xl shadow-xl py-1.5 z-50">
+            <div class="px-3 py-2 border-b border-ink-100 dark:border-ink-700 mb-1">
+              <p class="text-xs font-semibold text-ink-800 dark:text-ink-100">
+                {{ request.user.get_full_name|default:request.user.username }}
+              </p>
+              <p class="text-[10px] text-ink-400 capitalize">{{ request.user.role }}</p>
+            </div>
+            <a href="#" class="dditem">
+              <i class="fa-solid fa-user-pen w-4 text-center text-green-600"></i> Profile
+            </a>
+            <a href="#" class="dditem">
+              <i class="fa-solid fa-gear w-4 text-center text-green-600"></i> Settings
+            </a>
+            <div class="border-t border-ink-100 dark:border-ink-700 my-1"></div>
+            <a href="{% url 'accounts:logout' %}"
+               class="dditem text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20">
+              <i class="fa-solid fa-arrow-right-from-bracket w-4 text-center"></i> Sign out
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- License warning banner -->
+    {% if license_warning %}
+    <div class="flex items-center gap-3 px-4 py-2 text-sm
+                bg-yellow-50 dark:bg-yellow-900/20
+                border-b border-yellow-300 dark:border-yellow-700">
+      <i class="fa-solid fa-triangle-exclamation text-yellow-500 flex-shrink-0"></i>
+      <span class="flex-1 text-yellow-800 dark:text-yellow-200">{{ license_warning }}</span>
+      <a href="{% url 'licensing:status' %}"
+         class="text-xs font-semibold text-yellow-700 underline">Renew →</a>
+    </div>
+    {% endif %}
+
+    <!-- Onboarding checklist -->
+    {% if onboarding and onboarding.percent_complete < 100 %}
+    <div class="mx-4 mt-3" x-data="{ show: true }" x-show="show" x-cloak>
+      <div class="bg-white dark:bg-ink-800 rounded-2xl
+                  border-2 border-green-200 dark:border-green-800 p-4">
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <p class="text-sm font-semibold text-ink-800 dark:text-ink-100 flex items-center gap-2">
+              <i class="fa-solid fa-rocket text-green-500"></i>
+              Complete your setup
+            </p>
+            <p class="text-xs text-ink-400">{{ onboarding.percent_complete }}% done</p>
+          </div>
+          <button @click="show = false"
+                  class="text-ink-300 hover:text-ink-500 text-xl">&times;</button>
+        </div>
+        <div class="h-2 bg-ink-100 dark:bg-ink-700 rounded-full mb-3">
+          <div class="h-2 bg-green-500 rounded-full transition-all duration-500"
+               style="width: {{ onboarding.percent_complete }}%"></div>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {% include 'dashboard/_checklist_item.html' with done=onboarding.added_product label="Add product"  href=products_url icon="fa-box-open" %}
+          {% include 'dashboard/_checklist_item.html' with done=onboarding.made_first_sale label="First sale"  href=pos_url      icon="fa-cash-register" %}
+          {% include 'dashboard/_checklist_item.html' with done=onboarding.added_staff     label="Add staff"   href=staff_url    icon="fa-user-plus" %}
+          {% include 'dashboard/_checklist_item.html' with done=onboarding.viewed_reports  label="View reports" href=reports_url icon="fa-chart-line" %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Page content -->
+    <main class="flex-1 overflow-y-auto p-4 page-fade">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,149 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block page_title %}Dashboard{% endblock %}
+{% block page_subtitle %}
+  <p class="text-xs text-slate-400">
+    {{ today|date:"l, F j, Y" }}
+  </p>
+{% endblock %}
+
+{% block content %}
+<!-- KPI cards -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+  {% include 'dashboard/_kpi_card.html' with title="Today's sales"    value=stats.today_sales    prefix=currency icon="fa-arrow-trend-up"       color="green"  change=stats.sales_change %}
+{% include 'dashboard/_kpi_card.html' with title="Transactions"     value=stats.today_transactions                icon="fa-receipt"            color="yellow" %}
+{% include 'dashboard/_kpi_card.html' with title="Products"         value=stats.product_count                     icon="fa-box-open"           color="green"  %}
+{% include 'dashboard/_kpi_card.html' with title="Low stock alerts" value=stats.low_stock_count                   icon="fa-triangle-exclamation" color="red"  %}
+</div>
+
+<!-- Charts row -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+  <!-- Sales chart -->
+  <div class="lg:col-span-2 bg-white dark:bg-slate-800 rounded-2xl border
+              border-slate-200 dark:border-slate-700 p-5">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="font-semibold text-slate-700 dark:text-slate-200">Sales — last 7 days</h3>
+      <span class="text-xs text-slate-400">{{ currency }}</span>
+    </div>
+    <canvas id="salesChart" height="110"></canvas>
+  </div>
+
+  <!-- Top products -->
+  <div class="bg-white dark:bg-slate-800 rounded-2xl border
+              border-slate-200 dark:border-slate-700 p-5">
+    <h3 class="font-semibold text-slate-700 dark:text-slate-200 mb-4">Top products</h3>
+    <div class="space-y-3">
+      {% for p in top_products %}
+      <div class="flex items-center gap-3">
+        <div class="w-7 h-7 rounded-lg bg-primary-50 flex items-center justify-center
+                    text-primary-600 text-xs font-bold flex-shrink-0">
+          {{ forloop.counter }}
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium text-slate-700 dark:text-slate-200 truncate">
+            {{ p.name }}
+          </p>
+          <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-1 mt-1">
+            <div class="bg-primary h-1 rounded-full"
+                 style="width:{{ p.percent }}%"></div>
+          </div>
+        </div>
+        <span class="text-xs font-semibold text-slate-500 flex-shrink-0">{{ p.qty_sold }}</span>
+      </div>
+      {% empty %}
+      <p class="text-sm text-slate-400 text-center py-6">No sales yet</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- Recent transactions -->
+<div class="bg-white dark:bg-slate-800 rounded-2xl border
+            border-slate-200 dark:border-slate-700 p-5">
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="font-semibold text-slate-700 dark:text-slate-200">Recent transactions</h3>
+    <a href="{% url 'sales:list' %}"
+       class="text-xs text-primary-500 hover:underline font-medium">View all</a>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="text-xs text-slate-400 border-b border-slate-100 dark:border-slate-700">
+          <th class="text-left pb-2 font-medium">Receipt #</th>
+          <th class="text-left pb-2 font-medium">Items</th>
+          <th class="text-left pb-2 font-medium">Staff</th>
+          <th class="text-left pb-2 font-medium">Payment</th>
+          <th class="text-right pb-2 font-medium">Amount</th>
+          <th class="text-right pb-2 font-medium">Time</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-50 dark:divide-slate-700/50">
+        {% for sale in recent_sales %}
+        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+          <td class="py-3 font-mono text-xs text-primary-500 font-medium">
+            <a href="{% url 'sales:detail' sale.pk %}">#{{ sale.receipt_number }}</a>
+          </td>
+          <td class="py-3 text-slate-600 dark:text-slate-300">{{ sale.items_count }} item{{ sale.items_count|pluralize }}</td>
+          <td class="py-3 text-slate-500">{{ sale.served_by.get_short_name }}</td>
+          <td class="py-3">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium
+              {% if sale.payment_method == 'cash' %}bg-emerald-100 text-emerald-700
+              {% elif sale.payment_method == 'mpesa' %}bg-green-100 text-green-700
+              {% else %}bg-blue-100 text-blue-700{% endif %}">
+              {{ sale.get_payment_method_display }}
+            </span>
+          </td>
+          <td class="py-3 text-right font-semibold text-slate-700 dark:text-slate-200">
+            {{ currency }} {{ sale.total|floatformat:2 }}
+          </td>
+          <td class="py-3 text-right text-slate-400 text-xs">
+            {{ sale.created_at|time:"H:i" }}
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="py-10 text-center text-slate-400">
+            <i class="fa-solid fa-receipt text-3xl mb-2 block opacity-30"></i>
+            No sales today — <a href="{% url 'sales:pos' %}" class="text-primary-500 hover:underline">start selling</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+  const ctx = document.getElementById('salesChart');
+  if (ctx) {
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: {{ chart_labels|safe }},
+        datasets: [{
+          label: 'Sales',
+          data: {{ chart_data|safe }},
+          borderColor: '#4F46E5',
+          backgroundColor: 'rgba(79,70,229,.08)',
+          borderWidth: 2.5,
+          pointBackgroundColor: '#4F46E5',
+          pointRadius: 4,
+          tension: 0.4,
+          fill: true,
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+          y: { grid: { color: 'rgba(0,0,0,.04)' }, ticks: { font: { size: 11 } } }
+        }
+      }
+    });
+  }
+</script>
+{% endblock %}

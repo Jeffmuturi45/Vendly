@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Create account{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-6">
+  <div class="w-full max-w-lg">
+
+    <div class="flex items-center justify-center gap-2 mb-8">
+      <div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center">
+        <i class="fa-solid fa-bolt text-white"></i>
+      </div>
+      <span class="text-2xl font-bold text-primary-500">Vendly</span>
+    </div>
+
+    <div class="bg-white dark:bg-slate-800 rounded-2xl border
+                border-slate-200 dark:border-slate-700 p-8 shadow-sm">
+      <h1 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-1">
+        Create your account
+      </h1>
+      <p class="text-sm text-slate-400 mb-6">
+        Free {{ trial_days }}-day trial — no credit card required
+      </p>
+
+      <form method="post" class="space-y-4">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit"
+          class="w-full bg-primary hover:bg-primary-600 text-white font-semibold
+                 py-2.5 px-4 rounded-xl transition-colors">
+          Create account & continue
+          <i class="fa-solid fa-arrow-right ml-2"></i>
+        </button>
+      </form>
+
+      <p class="mt-5 text-center text-sm text-slate-500">
+        Already have an account?
+        <a href="{% url 'accounts:login' %}"
+           class="text-primary-500 font-semibold hover:underline">Sign in</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

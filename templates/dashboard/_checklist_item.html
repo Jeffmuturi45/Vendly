@@ -1,0 +1,15 @@
+<a href="{{ href }}"
+   class="flex items-center gap-2 p-2.5 rounded-xl border-2 transition-all
+     {% if done %}
+       border-green-300 bg-green-50 dark:bg-green-900/20 dark:border-green-700
+       text-green-700 dark:text-green-300
+     {% else %}
+       border-ink-200 dark:border-ink-700 text-ink-500 dark:text-ink-400
+       hover:border-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-900/20
+     {% endif %}">
+  <i class="fa-solid {% if done %}fa-circle-check text-green-500{% else %}{{ icon }} text-ink-400{% endif %} text-sm flex-shrink-0"></i>
+  <span class="text-xs font-medium">{{ label }}</span>
+  {% if done %}
+  <i class="fa-solid fa-check ml-auto text-green-400 text-xs"></i>
+  {% endif %}
+</a>

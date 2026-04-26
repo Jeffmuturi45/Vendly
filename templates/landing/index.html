@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+
+{% block title %}Vendly — Smart POS for modern businesses{% endblock %}
+
+{% block body %}
+
+<!-- ── NAV ── -->
+<nav class="fixed top-0 inset-x-0 z-50 bg-white/80 dark:bg-slate-900/80
+            backdrop-blur border-b border-slate-200 dark:border-slate-700"
+     x-data="{ open: false }">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center h-16 gap-8">
+    <div class="flex items-center gap-2 flex-shrink-0">
+      <div class="w-8 h-8 rounded-xl bg-primary flex items-center justify-center">
+        <i class="fa-solid fa-bolt text-white text-xs"></i>
+      </div>
+      <span class="text-lg font-bold text-primary-500">Vendly</span>
+    </div>
+
+    <div class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600
+                dark:text-slate-300 ml-4">
+      <a href="#features" class="hover:text-primary-500 transition-colors">Features</a>
+      <a href="#pricing"  class="hover:text-primary-500 transition-colors">Pricing</a>
+      <a href="#demo"     class="hover:text-primary-500 transition-colors">Demo</a>
+    </div>
+
+    <div class="flex items-center gap-3 ml-auto">
+      <a href="{% url 'accounts:login' %}"
+         class="hidden sm:block text-sm font-medium text-slate-600
+                dark:text-slate-300 hover:text-primary-500 transition-colors">
+        Sign in
+      </a>
+      <a href="{% url 'tenants:onboarding' %}"
+         class="bg-primary hover:bg-primary-600 text-white text-sm font-semibold
+                px-4 py-2 rounded-xl transition-colors">
+        Start free trial
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="pt-32 pb-20 px-4 sm:px-6 max-w-6xl mx-auto text-center">
+  <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-primary-50 text-primary-600
+              text-xs font-semibold rounded-full border border-primary-200 mb-6">
+    <i class="fa-solid fa-star text-[10px]"></i>
+    Built for African small businesses
+  </div>
+
+  <h1 class="text-4xl sm:text-6xl font-extrabold text-slate-900 dark:text-white
+             leading-tight mb-6 max-w-3xl mx-auto">
+    The smartest POS for your
+    <span class="text-primary-500"> growing business</span>
+  </h1>
+
+  <p class="text-lg text-slate-500 dark:text-slate-400 mb-10 max-w-xl mx-auto leading-relaxed">
+    Sell faster, track inventory, manage staff, and understand your numbers — all from one dashboard.
+    Works offline. Supports MPESA & Paystack.
+  </p>
+
+  <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+    <a href="{% url 'tenants:onboarding' %}"
+       class="w-full sm:w-auto bg-primary hover:bg-primary-600 text-white font-bold
+              px-8 py-3.5 rounded-2xl transition-colors flex items-center
+              justify-center gap-2 text-base shadow-lg shadow-primary/30">
+      <i class="fa-solid fa-rocket"></i> Start your free trial
+    </a>
+    <a href="{% url 'landing:demo' %}"
+       class="w-full sm:w-auto bg-white dark:bg-slate-800 hover:bg-slate-50
+              dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold
+              px-8 py-3.5 rounded-2xl border border-slate-200 dark:border-slate-700
+              transition-colors flex items-center justify-center gap-2 text-base">
+      <i class="fa-solid fa-play-circle text-primary-500"></i> Try live demo
+    </a>
+  </div>
+
+  <p class="mt-4 text-xs text-slate-400">
+    14-day free trial · No credit card required · Cancel anytime
+  </p>
+</section>
+
+<!-- ── FEATURES ── -->
+<section id="features" class="py-20 bg-slate-50 dark:bg-slate-800/50">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-14">
+      <h2 class="text-3xl font-extrabold text-slate-800 dark:text-slate-100 mb-3">
+        Everything your business needs
+      </h2>
+      <p class="text-slate-500 dark:text-slate-400 max-w-md mx-auto">
+        One platform. Zero complexity. Designed for the way you actually work.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for feature in features %}
+      <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200
+                  dark:border-slate-700 p-6 hover:shadow-md hover:-translate-y-0.5
+                  transition-all duration-200">
+        <div class="w-11 h-11 rounded-xl bg-{{ feature.color }}-50
+                    flex items-center justify-center mb-4">
+          <i class="fa-solid {{ feature.icon }} text-{{ feature.color }}-500"></i>
+        </div>
+        <h3 class="font-semibold text-slate-800 dark:text-slate-100 mb-2">
+          {{ feature.title }}
+        </h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+          {{ feature.description }}
+        </p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ── PRICING ── -->
+<section id="pricing" class="py-20 px-4 sm:px-6 max-w-6xl mx-auto">
+  <div class="text-center mb-14">
+    <h2 class="text-3xl font-extrabold text-slate-800 dark:text-slate-100 mb-3">
+      Simple, honest pricing
+    </h2>
+    <p class="text-slate-500 dark:text-slate-400">Start free. Scale when you're ready.</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+    <!-- Basic -->
+    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200
+                dark:border-slate-700 p-8">
+      <p class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-2">Basic</p>
+      <p class="text-4xl font-extrabold text-slate-800 dark:text-slate-100 mb-1">
+        KES 999
+        <span class="text-base font-normal text-slate-400">/mo</span>
+      </p>
+      <p class="text-xs text-slate-400 mb-6">per business location</p>
+      <ul class="space-y-3 mb-8">
+        {% for item in basic_features %}
+        <li class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+          <i class="fa-solid fa-circle-check text-emerald-500 text-xs flex-shrink-0"></i>
+          {{ item }}
+        </li>
+        {% endfor %}
+      </ul>
+      <a href="{% url 'tenants:onboarding' %}"
+         class="block w-full text-center border border-primary text-primary font-semibold
+                py-2.5 rounded-xl hover:bg-primary hover:text-white transition-colors">
+        Start free trial
+      </a>
+    </div>
+
+    <!-- Pro -->
+    <div class="bg-primary rounded-2xl p-8 relative overflow-hidden shadow-xl shadow-primary/30">
+      <div class="absolute top-4 right-4 bg-white/20 text-white text-xs font-bold
+                  px-2 py-1 rounded-full">Most popular</div>
+      <p class="text-sm font-semibold text-primary-200 uppercase tracking-wide mb-2">Pro</p>
+      <p class="text-4xl font-extrabold text-white mb-1">
+        KES 2,499
+        <span class="text-base font-normal text-primary-200">/mo</span>
+      </p>
+      <p class="text-xs text-primary-300 mb-6">per business location</p>
+      <ul class="space-y-3 mb-8">
+        {% for item in pro_features %}
+        <li class="flex items-center gap-2 text-sm text-white">
+          <i class="fa-solid fa-circle-check text-primary-200 text-xs flex-shrink-0"></i>
+          {{ item }}
+        </li>
+        {% endfor %}
+      </ul>
+      <a href="{% url 'tenants:onboarding' %}"
+         class="block w-full text-center bg-white text-primary font-bold
+                py-2.5 rounded-xl hover:bg-primary-50 transition-colors">
+        Start free trial
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="border-t border-slate-200 dark:border-slate-700 py-10
+               bg-white dark:bg-slate-800">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row
+              items-center justify-between gap-4">
+    <div class="flex items-center gap-2">
+      <div class="w-7 h-7 rounded-lg bg-primary flex items-center justify-center">
+        <i class="fa-solid fa-bolt text-white text-xs"></i>
+      </div>
+      <span class="font-bold text-primary-500">Vendly</span>
+    </div>
+    <p class="text-xs text-slate-400">
+      © {{ today.year }} Vendly. Smart POS for growing businesses.
+    </p>
+    <div class="flex items-center gap-4 text-xs text-slate-400">
+      <a href="#" class="hover:text-primary-500 transition-colors">Privacy</a>
+      <a href="#" class="hover:text-primary-500 transition-colors">Terms</a>
+      <a href="#" class="hover:text-primary-500 transition-colors">Support</a>
+    </div>
+  </div>
+</footer>
+
+{% endblock %}
